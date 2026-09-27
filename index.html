@@ -318,10 +318,15 @@ footer h2{font-family:var(--font-display); font-weight:800; font-size:clamp(1.9r
 .loop-word.lw-creation{color:var(--tally);}
 #intro.reveal .now-showing{opacity:0; transition:opacity .4s ease;}
 .intro-tag{
-  color:var(--ink-dim); font-size:1.05rem; max-width:46ch; margin:6px 0 34px; font-weight:500;
+  color:var(--ink-dim); font-size:1.05rem; font-weight:500;
   opacity:0; transform:translateY(14px); transition:opacity .8s ease .15s, transform .8s ease .15s;
+  width:100%; max-width:520px; overflow:hidden; margin:6px 0 34px;
+  -webkit-mask-image:linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+  mask-image:linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
 }
-.intro-tag .arrow{color:var(--tally); font-weight:700; margin:0 2px;}
+.intro-tag .flow-track{display:flex; gap:0.6em; white-space:nowrap; width:max-content; animation:flow-loop 14s linear infinite;}
+.intro-tag .arrow{color:var(--tally); font-weight:700;}
+@keyframes flow-loop{from{transform:translateX(0);} to{transform:translateX(-50%);}}
 #intro.ready .intro-tag{opacity:1; transform:translateY(0);}
 .intro-enter{
   opacity:0; transform:translateY(14px); transition:opacity .8s ease .3s, transform .8s ease .3s;
@@ -376,9 +381,9 @@ footer h2{font-family:var(--font-display); font-weight:800; font-size:clamp(1.9r
 }
 /* BIG INDUSTRIES MARQUEE */
 .industry-ticker{
-  width:100%; overflow:hidden; background:var(--tally);
+  position:relative; z-index:3; width:100%; overflow:hidden; background:var(--tally);
   border-top:1px solid rgba(0,0,0,0.4); border-bottom:1px solid rgba(0,0,0,0.4);
-  padding:22px 0;
+  padding:22px 0; opacity:1;
 }
 .industry-track{
   display:flex; align-items:center; gap:0.6em; white-space:nowrap; width:max-content;
@@ -553,15 +558,26 @@ body.custom-cursor .cursor-dot{opacity:0.9;}
   <div class="intro-mid">
     <h1 class="loop-word" id="loopWord">MEZAN.</h1>
     <div class="now-showing">Now showing ● <span id="nowproj" class="accent">Aurora Skincare — 30s Spot</span></div>
-    <p class="intro-tag">edit stories <span class="arrow">→</span> shape ideas <span class="arrow">→</span> build brands</p>
+    <p class="intro-tag">
+      <span class="flow-track">
+        <span>edit stories</span><span class="arrow">→</span><span>shape ideas</span><span class="arrow">→</span><span>build brands</span><span class="arrow">→</span>
+        <span>edit stories</span><span class="arrow">→</span><span>shape ideas</span><span class="arrow">→</span><span>build brands</span><span class="arrow">→</span>
+      </span>
+    </p>
     <a href="#" id="enter" class="btn primary pill intro-enter" data-cursor="PLAY">Open Website ↓</a>
   </div>
-  <div class="intro-ticker">
-    <div class="ticker-track">
-      <span><b>●</b> Commercial</span><span><b>●</b> Motion Graphics</span><span><b>●</b> Restaurants</span><span><b>●</b> Music Videos</span><span><b>●</b> Editor: Mezan</span>
-      <span><b>●</b> Commercial</span><span><b>●</b> Motion Graphics</span><span><b>●</b> Restaurants</span><span><b>●</b> Music Videos</span><span><b>●</b> Editor: Mezan</span>
+
+  <div class="industry-ticker">
+    <div class="industry-track">
+      <span>Restaurants</span><span class="diamond">✦</span><span>Real Estate</span><span class="diamond">✦</span><span>Tiles</span><span class="diamond">✦</span>
+      <span>Hospitality</span><span class="diamond">✦</span><span>Automotive</span><span class="diamond">✦</span><span>Health &amp; Beauty</span><span class="diamond">✦</span>
+      <span>Retail</span><span class="diamond">✦</span><span>SaaS</span><span class="diamond">✦</span><span>Personal Branding</span><span class="diamond">✦</span>
+      <span>Restaurants</span><span class="diamond">✦</span><span>Real Estate</span><span class="diamond">✦</span><span>Tiles</span><span class="diamond">✦</span>
+      <span>Hospitality</span><span class="diamond">✦</span><span>Automotive</span><span class="diamond">✦</span><span>Health &amp; Beauty</span><span class="diamond">✦</span>
+      <span>Retail</span><span class="diamond">✦</span><span>SaaS</span><span class="diamond">✦</span><span>Personal Branding</span><span class="diamond">✦</span>
     </div>
   </div>
+
 </div>
 
 <nav>
@@ -978,10 +994,12 @@ render('all');
   const enterBtn = document.getElementById('enter');
   const loopWord = document.getElementById('loopWord');
   const names = ['Aurora Skincare — 30s Spot','Lumen App — Onboarding','Osteria Bellini — Brand Film','Hollow Static — "Palindrome"'];
-  let frame = 0, layerIdx = 0, active = true, bgPhase = 0;
-
-  loopWord.textContent = 'MEZAN.';
-  loopWord.className = 'loop-word lw-mezan';
+  const words = [
+    {text:'MEZAN.', cls:'lw-mezan', bg:'creation'},
+    {text:'CONCEPT', cls:'lw-concept', bg:'concept'},
+    {text:'CREATION', cls:'lw-creation', bg:'creation'}
+  ];
+  let frame = 0, layerIdx = 0, wordIdx = 0, active = true;
 
   const tcTimer = setInterval(() => {
     frame++;
@@ -996,18 +1014,26 @@ render('all');
     nowproj.textContent = names[layerIdx];
   }, 1400);
 
-  // background keeps its concept (grayscale/wireframe) <-> creation (full color) cycle, independent of the fixed MEZAN text
-  const bgTimer = setInterval(() => {
-    bgPhase = (bgPhase + 1) % 3; // creation, concept, creation — mostly color, with a brief grayscale beat
-    const isConcept = bgPhase === 1;
-    introEl.classList.toggle('creation', !isConcept);
-    introEl.classList.toggle('concept', isConcept);
+  function showWord(i){
+    const w = words[i];
+    loopWord.classList.add('lw-out');
+    setTimeout(() => {
+      if(!active) return;
+      loopWord.textContent = w.text;
+      loopWord.className = 'loop-word ' + w.cls;
+      introEl.classList.toggle('creation', w.bg === 'creation');
+      introEl.classList.toggle('concept', w.bg === 'concept');
+    }, 600);
+  }
+  const wordTimer = setInterval(() => {
+    wordIdx = (wordIdx + 1) % words.length;
+    showWord(wordIdx);
   }, 3000);
-  introEl.classList.add('creation');
+  showWord(0);
 
   function dismiss(){
     active = false;
-    clearInterval(tcTimer); clearInterval(cycleTimer); clearInterval(bgTimer);
+    clearInterval(tcTimer); clearInterval(cycleTimer); clearInterval(wordTimer);
     introEl.classList.add('gone');
     document.body.style.overflow = '';
     window.scrollTo({top:0});
@@ -1018,7 +1044,7 @@ render('all');
     // reuse the shared curtain slide: comes down from the top, covers,
     // swaps intro for homepage while hidden, continues down and off.
     active = false;
-    clearInterval(tcTimer); clearInterval(cycleTimer); clearInterval(bgTimer);
+    clearInterval(tcTimer); clearInterval(cycleTimer); clearInterval(wordTimer);
     curtainTransition(() => {
       introEl.classList.add('gone');
       document.body.style.overflow = '';
