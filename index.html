@@ -202,6 +202,7 @@ body.site-in .hero-strip b{opacity:1; transform:scale(1);}
 }
 .thumb.is-wide{aspect-ratio:16/9;}
 .thumb .fill{position:absolute; inset:0;}
+.thumb .yt-thumb{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; z-index:1;}
 .thumb .grain{position:absolute; inset:0; opacity:0.06; mix-blend-mode:overlay;
   background-image:radial-gradient(circle at 20% 30%, #fff 0.5px, transparent 0.5px);
   background-size:3px 3px;}
@@ -226,6 +227,11 @@ body.site-in .hero-strip b{opacity:1; transform:scale(1);}
 .f-motion{background:linear-gradient(135deg,#0f1a1c,#1f4a44 45%,#0c0c0d);}
 .f-restaurant{background:linear-gradient(135deg,#241b0d,#5c3a15 45%,#0c0c0d);}
 .f-music{background:linear-gradient(135deg,#1a1024,#3e1f52 45%,#0c0c0d);}
+.f-podcast{background:linear-gradient(135deg,#0d1b24,#1f4a5c 45%,#0c0c0d);}
+.f-tiles{background:linear-gradient(135deg,#231c14,#5c4a2a 45%,#0c0c0d);}
+.f-construction{background:linear-gradient(135deg,#1c1c1a,#4a4538 45%,#0c0c0d);}
+.f-automotive{background:linear-gradient(135deg,#141b24,#2a4160 45%,#0c0c0d);}
+.f-beauty{background:linear-gradient(135deg,#24141c,#5c2a44 45%,#0c0c0d);}
 .thumb::before{
   content:''; position:absolute; inset:-40%; opacity:0.5;
   background:repeating-linear-gradient(115deg, rgba(255,255,255,0.05) 0 2px, transparent 2px 26px);
@@ -529,6 +535,36 @@ body.custom-cursor .cursor-dot{opacity:0.9;}
   white-space:nowrap;
 }
 .cursor-dot.label span{opacity:1; transform:scale(1);}
+
+/* VIDEO LIGHTBOX — lazy-loaded: iframe only created on click, destroyed on close.
+   Works once deployed to your own domain; Claude's own preview link blocks embedded players. */
+.video-lightbox{
+  position:fixed; inset:0; z-index:9500; display:flex; align-items:center; justify-content:center;
+  padding:6vh 20px; opacity:0; pointer-events:none; transition:opacity .5s var(--ease);
+}
+.video-lightbox.open{opacity:1; pointer-events:auto;}
+.lightbox-backdrop{position:absolute; inset:0; background:rgba(5,5,6,0.88); backdrop-filter:blur(14px);}
+.lightbox-panel{
+  position:relative; z-index:2; max-width:380px; width:100%;
+  transform:scale(0.94) translateY(16px); transition:transform .5s var(--ease);
+}
+.video-lightbox.open .lightbox-panel{transform:scale(1) translateY(0);}
+.lightbox-close{
+  position:absolute; top:-52px; right:0; width:40px; height:40px; border-radius:50%;
+  background:rgba(237,234,227,0.1); border:none; color:var(--ink); font-size:1rem; cursor:pointer;
+  transition:background .4s var(--ease), transform .4s var(--ease);
+}
+.lightbox-close:hover{background:rgba(237,234,227,0.18); transform:rotate(90deg);}
+.lightbox-frame{
+  position:relative; width:100%; aspect-ratio:9/16; border-radius:14px; overflow:hidden;
+  background:var(--panel); border:1px solid var(--line);
+}
+.lightbox-frame.wide{aspect-ratio:16/9;}
+.lightbox-frame iframe{position:absolute; inset:0; width:100%; height:100%; border:none;}
+.lightbox-panel.wide{max-width:720px;}
+.lightbox-meta{padding:18px 4px 0;}
+.lightbox-tag{color:var(--tally); font-size:0.75rem; letter-spacing:1px;}
+.lightbox-meta h3{margin:8px 0 16px; font-size:1.2rem; font-weight:700;}
 </style>
 </head>
 <body>
@@ -629,6 +665,11 @@ body.custom-cursor .cursor-dot{opacity:0.9;}
     <button class="fbtn" data-filter="motion">MOTION GRAPHICS</button>
     <button class="fbtn" data-filter="restaurant">RESTAURANTS</button>
     <button class="fbtn" data-filter="music">MUSIC VIDEOS</button>
+    <button class="fbtn" data-filter="podcast">PODCASTS</button>
+    <button class="fbtn" data-filter="tiles">TILES</button>
+    <button class="fbtn" data-filter="construction">CONSTRUCTION</button>
+    <button class="fbtn" data-filter="automotive">AUTOMOTIVE</button>
+    <button class="fbtn" data-filter="beauty">BEAUTY &amp; PERSONAL CARE</button>
   </div>
   <div class="grid-wrap">
     <div class="grid" id="grid"></div>
@@ -724,9 +765,9 @@ body.custom-cursor .cursor-dot{opacity:0.9;}
     <a href="#work" data-page="work" class="navWorkLink">All projects →</a>
   </div>
   <div class="scatter" id="scatter">
-    <div class="stile s1"><div class="thumb f-commercial"><div class="grain"></div></div><span class="label">Aurora Skincare</span></div>
-    <div class="stile s2"><div class="thumb f-restaurant"><div class="grain"></div></div><span class="label">Osteria Bellini</span></div>
-    <div class="stile s3"><div class="thumb f-motion"><div class="grain"></div></div><span class="label">Lumen App</span></div>
+    <div class="stile s1" data-video="njYhgypBQTQ"><div class="thumb f-restaurant"><img class="yt-thumb" src="https://i.ytimg.com/vi/njYhgypBQTQ/hqdefault.jpg" alt="" loading="lazy" onerror="this.style.display='none'"><div class="grain"></div></div><span class="label">RUH Mediterranean Kitchen</span></div>
+    <div class="stile s2" data-video="gYzPfrgERNo"><div class="thumb f-restaurant"><img class="yt-thumb" src="https://i.ytimg.com/vi/gYzPfrgERNo/hqdefault.jpg" alt="" loading="lazy" onerror="this.style.display='none'"><div class="grain"></div></div><span class="label">Hola Amigos — Customers</span></div>
+    <div class="stile s3" data-video="GCCyjYnJxck"><div class="thumb f-construction"><img class="yt-thumb" src="https://i.ytimg.com/vi/GCCyjYnJxck/hqdefault.jpg" alt="" loading="lazy" onerror="this.style.display='none'"><div class="grain"></div></div><span class="label">Diamond Render &amp; Texture</span></div>
   </div>
 </section>
 
@@ -830,6 +871,19 @@ body.custom-cursor .cursor-dot{opacity:0.9;}
   <span class="mono">END_OF_TIMELINE</span>
 </div>
 
+<div id="videoLightbox" class="video-lightbox" aria-hidden="true">
+  <div class="lightbox-backdrop" id="lightboxBackdrop"></div>
+  <div class="lightbox-panel">
+    <button class="lightbox-close" id="lightboxClose" aria-label="Close" data-cursor="CLOSE">✕</button>
+    <div class="lightbox-frame" id="lightboxFrame"></div>
+    <div class="lightbox-meta">
+      <span class="lightbox-tag mono" id="lightboxTag">COMMERCIAL</span>
+      <h3 id="lightboxTitle">Project title</h3>
+      <a href="#" id="lightboxOpen" target="_blank" rel="noopener" class="btn ghost pill" data-cursor="OPEN">Open ↗</a>
+    </div>
+  </div>
+</div>
+
 <script>
 /* SHARED CURTAIN TRANSITION: blank panel slides down from top, covers, swaps content, slides off */
 function curtainTransition(swapFn){
@@ -925,17 +979,61 @@ window.curtainTransition = curtainTransition;
 })();
 
 const projects = [
-  {cat:'commercial', title:'Aurora Skincare — 30s Spot', desc:'Broadcast commercial, fast cutdown for social.', dur:'0:30', fill:'f-commercial'},
+  {cat:'commercial', title:'Aurora Skincare — 30s Spot', desc:'Broadcast commercial, fast cutdown for social.', dur:'0:30', fill:'f-commercial', video:'WnKQ5zdKx4Y'},
   {cat:'commercial', title:'Kinetic Sneakers Launch', desc:'Product hero film with high-energy pacing.', dur:'0:45', fill:'f-commercial'},
   {cat:'commercial', title:'Northbound Insurance', desc:'Emotional brand narrative, broadcast cut.', dur:'1:00', fill:'f-commercial'},
-  {cat:'motion', title:'Lumen App — Onboarding Explainer', desc:'2D motion graphics with UI screen recordings.', dur:'0:55', fill:'f-motion'},
-  {cat:'motion', title:'Q3 Investor Data Reveal', desc:'Animated data visualization sequence.', dur:'1:20', fill:'f-motion'},
-  {cat:'motion', title:'Festival Title Sequence', desc:'Kinetic type opener for a film festival.', dur:'0:18', fill:'f-motion'},
-  {cat:'restaurant', title:'Osteria Bellini — Brand Film', desc:'Slow, tactile pacing built around the kitchen.', dur:'2:10', fill:'f-restaurant'},
-  {cat:'restaurant', title:'Smoke & Ash BBQ', desc:'Social reels package, 6 cutdowns from one shoot day.', dur:'0:40', fill:'f-restaurant'},
-  {cat:'restaurant', title:'Tide Table Oyster Bar', desc:'Ambient sound-led sizzle reel.', dur:'1:05', fill:'f-restaurant'},
-  {cat:'music', title:'Hollow Static — "Palindrome"', desc:'Performance + narrative intercut music video.', dur:'3:24', fill:'f-music'},
-  {cat:'music', title:'Ines Marlow — "Low Tide"', desc:'Single-location one-take stylized edit.', dur:'2:58', fill:'f-music'},
+  {cat:'motion', title:'Finora — Restaurant Management Software', desc:'Motion graphics package.', dur:'', fill:'f-motion', video:'k90S-ILPmYU', url:'https://youtube.com/shorts/k90S-ILPmYU'},
+  {cat:'motion', title:'Peri Grill — Motion Graphics', desc:'Motion graphics package.', dur:'', fill:'f-motion', video:'e6XwmUW4zCU', url:'https://youtube.com/shorts/e6XwmUW4zCU'},
+  {cat:'motion', title:'Finora — Restaurant Software (M.G.)', desc:'Motion graphics package.', dur:'', fill:'f-motion', video:'eLZYHYdfARY', url:'https://youtube.com/shorts/eLZYHYdfARY'},
+  {cat:'motion', title:'Finora — Restaurant Management Software (Motion Graphics)', desc:'Motion graphics package.', dur:'', fill:'f-motion', video:'UzBANmmTNvw', url:'https://youtube.com/shorts/UzBANmmTNvw'},
+  {cat:'motion', title:'Rodhi Source — The Journey', desc:'Motion graphics package.', dur:'', fill:'f-motion', video:'pihUyDQmYrQ', url:'https://youtube.com/shorts/pihUyDQmYrQ'},
+  {cat:'motion', title:'Rodhi Source — 5 Mistakes to Avoid When Importing', desc:'Motion graphics package.', dur:'', fill:'f-motion', video:'CmyuNOpGp0E', url:'https://youtube.com/shorts/CmyuNOpGp0E'},
+  {cat:'motion', title:'Rodhi Source — Import From China', desc:'Motion graphics package.', dur:'', fill:'f-motion', video:'jgZVk1TK2Mc', url:'https://youtube.com/shorts/jgZVk1TK2Mc'},
+  {cat:'motion', title:'Structural Analysis — Naksa Hub', desc:'Motion graphics package.', dur:'', fill:'f-motion', video:'5PuIG8rRodo', url:'https://youtube.com/shorts/5PuIG8rRodo'},
+  {cat:'motion', title:'Chronos — Consultancies AI Agent (The Makers Crew)', desc:'Motion graphics package.', dur:'', fill:'f-motion', video:'w7DYvzxb5Zw', url:'https://youtube.com/shorts/w7DYvzxb5Zw'},
+  {cat:'motion', title:'Chronos — AI Agent (The Makers Crew)', desc:'Motion graphics package.', dur:'', fill:'f-motion', video:'IH1RR3IxkkE', url:'https://youtube.com/shorts/IH1RR3IxkkE'},
+  {cat:'motion', title:'Alpine Timepieces — New Year Offer (Durbarmarg)', desc:'Motion graphics package.', dur:'', fill:'f-motion', video:'LoonUEWxVIQ', url:'https://youtube.com/shorts/LoonUEWxVIQ'},
+  {cat:'motion', title:'Ensearch Consultancy — Relatives Migration', desc:'Motion graphics package.', dur:'', fill:'f-motion', video:'cUsR0BaFtoE', url:'https://youtube.com/shorts/cUsR0BaFtoE'},
+  {cat:'motion', title:'Ensearch Consultancy — Adelaide', desc:'Motion graphics package.', dur:'', fill:'f-motion', video:'Fx3y3Lqbdjg', url:'https://youtube.com/shorts/Fx3y3Lqbdjg'},
+  {cat:'restaurant', title:'Hola Amigos — Drinks', desc:'Semaphore, SA.', dur:'', fill:'f-restaurant', video:'MuGmP1ZPF_o', url:'https://youtube.com/shorts/MuGmP1ZPF_o'},
+  {cat:'restaurant', title:'Hola Amigos — Anniversary', desc:'Semaphore, SA.', dur:'', fill:'f-restaurant', video:'NkaBoc2dN1o', url:'https://youtube.com/shorts/NkaBoc2dN1o'},
+  {cat:'restaurant', title:'Hola Amigos — Foods', desc:'Semaphore, SA.', dur:'', fill:'f-restaurant', video:'TdHigRUm94g', url:'https://youtu.be/TdHigRUm94g'},
+  {cat:'restaurant', title:'Hola Amigos — Customers', desc:'Semaphore, SA.', dur:'', fill:'f-restaurant', video:'gYzPfrgERNo', url:'https://youtu.be/gYzPfrgERNo'},
+  {cat:'restaurant', title:'RUH Mediterranean Kitchen', desc:'Adelaide.', dur:'', fill:'f-restaurant', video:'njYhgypBQTQ', url:'https://youtube.com/shorts/njYhgypBQTQ'},
+  {cat:'restaurant', title:'Night Shisha & Food — Adelaide', desc:'Adelaide.', dur:'', fill:'f-restaurant', video:'tgNaWFCMQ3s', url:'https://youtube.com/shorts/tgNaWFCMQ3s'},
+  {cat:'restaurant', title:'Night Shisha & Food — Opening Week', desc:'Adelaide.', dur:'', fill:'f-restaurant', video:'QRmQrq4Kl-M', url:'https://youtube.com/shorts/QRmQrq4Kl-M'},
+  {cat:'restaurant', title:"Shahi Zaiqa Mandi's — Adelaide", desc:'Adelaide.', dur:'', fill:'f-restaurant', video:'akmErE-idd8', url:'https://youtube.com/shorts/akmErE-idd8'},
+  {cat:'restaurant', title:'Shahi Zaiqa — New Opening', desc:'Adelaide.', dur:'', fill:'f-restaurant', video:'2b0jzOFuGQk', url:'https://youtube.com/shorts/2b0jzOFuGQk'},
+  {cat:'restaurant', title:'Shahi Zaiqa — Hyderabadi Dum Biryani', desc:'Restaurant feature.', dur:'', fill:'f-restaurant', video:'lQUKWXR3yok', url:'https://youtube.com/shorts/lQUKWXR3yok'},
+  {cat:'restaurant', title:'Jimbu Thakali — Social Media', desc:'Social content package.', dur:'', fill:'f-restaurant', video:'J1yRiWLphEI', url:'https://youtube.com/shorts/J1yRiWLphEI'},
+  {cat:'restaurant', title:'Attic — Food', desc:'Food feature.', dur:'', fill:'f-restaurant', video:'TV9nJPIflfw', url:'https://youtube.com/shorts/TV9nJPIflfw'},
+  {cat:'restaurant', title:'Attic — Content', desc:'Social content package.', dur:'', fill:'f-restaurant', video:'QlVvxr3bHC0', url:'https://youtube.com/shorts/QlVvxr3bHC0'},
+  {cat:'restaurant', title:'Peri Grill — Event Celebration', desc:'Event coverage.', dur:'', fill:'f-restaurant', video:'aKfkbRhCDZk', url:'https://youtube.com/shorts/aKfkbRhCDZk'},
+  {cat:'restaurant', title:'Hotel Buddha', desc:'Restaurant feature.', dur:'', fill:'f-restaurant', video:'sDbWmVzBY64', url:'https://youtube.com/shorts/sDbWmVzBY64'},
+  {cat:'tiles', title:"Life's Tiles Lonsdale — Tile Showroom", desc:'Tile Showroom.', dur:'', fill:'f-tiles', video:'t3jX6VgdAcU', url:'https://youtube.com/shorts/t3jX6VgdAcU'},
+  {cat:'tiles', title:"Life's Tiles Lonsdale — New Arrival Drop", desc:'Adelaide.', dur:'', fill:'f-tiles', video:'MP194bwGNoY', url:'https://youtube.com/shorts/MP194bwGNoY'},
+  {cat:'tiles', title:"Life's Tiles Lonsdale — Romestone", desc:'Product feature.', dur:'', fill:'f-tiles', video:'Q10pISVEvXg', url:'https://youtube.com/shorts/Q10pISVEvXg'},
+  {cat:'tiles', title:"Life's Tiles Lonsdale — Everstone", desc:'Product feature.', dur:'', fill:'f-tiles', video:'0riGy_Uz23M', url:'https://youtube.com/shorts/0riGy_Uz23M'},
+  {cat:'tiles', title:"Life's Tiles Lonsdale — Bathroom Feature Wall", desc:'Product feature.', dur:'', fill:'f-tiles', video:'ADXH4emIKf0', url:'https://youtube.com/shorts/ADXH4emIKf0'},
+  {cat:'tiles', title:"Life's Tiles Lonsdale — Tile Showroom II", desc:'Tile Showroom.', dur:'', fill:'f-tiles', video:'9AhtbHbMTv0', url:'https://youtube.com/shorts/9AhtbHbMTv0'},
+  {cat:'tiles', title:"Life's Tiles Lonsdale — Warehouse Tour", desc:'Warehouse tour.', dur:'', fill:'f-tiles', video:'DuqVrgRQ3B4', url:'https://youtube.com/shorts/DuqVrgRQ3B4'},
+  {cat:'construction', title:'Diamond Render & Texture', desc:'Adelaide.', dur:'', fill:'f-construction', video:'GCCyjYnJxck', url:'https://youtube.com/shorts/GCCyjYnJxck'},
+  {cat:'automotive', title:'Kia Dealership — Speed Ramping', desc:'Adelaide.', dur:'', fill:'f-automotive', video:'28RPdYUPoxI', url:'https://youtube.com/shorts/28RPdYUPoxI'},
+  {cat:'automotive', title:'Adrian Brien Kia — Dealership', desc:'Adelaide.', dur:'', fill:'f-automotive', video:'CHADPmIc0UY', url:'https://youtube.com/shorts/CHADPmIc0UY'},
+  {cat:'automotive', title:'Renault Master — AI Generated Clips', desc:'AI-assisted edit.', dur:'', fill:'f-automotive', video:'6gBtXr5oD-s', url:'https://youtube.com/shorts/6gBtXr5oD-s'},
+  {cat:'automotive', title:'Hyundai Dealership — Speed Ramp', desc:'Dealership feature.', dur:'', fill:'f-automotive', video:'apdnK-SrOWU', url:'https://youtube.com/shorts/apdnK-SrOWU'},
+  {cat:'automotive', title:"Adrian Brien — SA's Biggest Car Clearance", desc:'Dealership event.', dur:'', fill:'f-automotive', video:'Cvmp2ixppvg', url:'https://youtube.com/shorts/Cvmp2ixppvg'},
+  {cat:'beauty', title:'Nassim Perfumes — Store Opening', desc:'Adelaide.', dur:'', fill:'f-beauty', video:'0WH9eu2sVyU', url:'https://youtube.com/shorts/0WH9eu2sVyU'},
+  {cat:'beauty', title:'Nassim Perfumes — Second Store Opening', desc:'Adelaide.', dur:'', fill:'f-beauty', video:'pTR3N3xQjUk', url:'https://youtube.com/shorts/pTR3N3xQjUk'},
+  {cat:'beauty', title:'Nassim Perfumes — Customer Review', desc:'Adelaide.', dur:'', fill:'f-beauty', video:'Bqh7ljUQXsA', url:'https://youtube.com/shorts/Bqh7ljUQXsA'},
+  {cat:'beauty', title:'Nassim Perfumes — Highlight Reel', desc:'Adelaide.', dur:'', fill:'f-beauty', video:'nuN0GS_UcW4', url:'https://youtube.com/shorts/nuN0GS_UcW4'},
+  {cat:'beauty', title:'Gorkhey Muscles — Wrist Wrap', desc:'Product feature.', dur:'', fill:'f-beauty', video:'9N7cVx9CozY', url:'https://youtube.com/shorts/9N7cVx9CozY'},
+  {cat:'music', title:'Avikk — "Kshati" (Official Video)', desc:'Official music video edit.', dur:'', fill:'f-music', video:'VhmwHC6wfjw', url:'https://youtu.be/VhmwHC6wfjw', wide:true},
+  {cat:'music', title:'Anjan Ranabhat — "Timi Mero" (Official Music Video)', desc:'Official music video edit.', dur:'', fill:'f-music', video:'WeluLSmOEhU', url:'https://youtu.be/WeluLSmOEhU', wide:true},
+  {cat:'podcast', title:"The Horrific Reality of War's Unspoken Wounds", desc:'Long-form podcast episode edit.', dur:'', fill:'f-podcast', video:'-o-0egTjRZo', url:'https://youtu.be/-o-0egTjRZo', wide:true},
+  {cat:'podcast', title:"Ayushman Joshi's Life-Changing Secrets", desc:'Long-form podcast episode edit.', dur:'', fill:'f-podcast', video:'IF0Dq04OmXM', url:'https://youtu.be/IF0Dq04OmXM', wide:true},
+  {cat:'podcast', title:'Fun Q&A With Ayushman Joshi', desc:'Long-form podcast episode edit.', dur:'', fill:'f-podcast', video:'tQtEYXvwo0s', url:'https://youtu.be/tQtEYXvwo0s', wide:true},
+  {cat:'podcast', title:"What Really Happens To Eva Giri Fans If They Don't Know This?", desc:'Long-form podcast episode edit.', dur:'', fill:'f-podcast', video:'QsvnnW_Xf1k', url:'https://youtu.be/QsvnnW_Xf1k', wide:true},
 ];
 
 const grid = document.getElementById('grid');
@@ -955,10 +1053,11 @@ function render(filter){
     card.style.transform = 'translateY(24px) scale(0.97)';
     card.style.transition = `opacity 1.1s cubic-bezier(.16,1,.3,1) ${i*0.09}s, transform 1.1s cubic-bezier(.16,1,.3,1) ${i*0.09}s`;
     card.innerHTML = `
-      <div class="thumb ${p.cat === 'music' ? 'is-wide' : ''}">
+      <div class="thumb ${p.wide || p.cat === 'music' ? 'is-wide' : ''}">
         <div class="fill ${p.fill}"></div>
+        ${p.video ? `<img class="yt-thumb" src="https://i.ytimg.com/vi/${p.video}/hqdefault.jpg" alt="" loading="lazy" onerror="this.style.display='none'">` : ''}
         <div class="grain"></div>
-        <span class="dur mono">${p.dur}</span>
+        ${p.dur ? `<span class="dur mono">${p.dur}</span>` : ''}
         <div class="playbtn">${playIcon()}</div>
       </div>
       <div class="card-body">
@@ -966,6 +1065,10 @@ function render(filter){
         <p>${p.desc}</p>
         <div class="tags"><span class="tag">${p.cat}</span></div>
       </div>`;
+    if(p.video){
+      card.style.cursor = 'pointer';
+      card.addEventListener('click', () => window.openVideoLightbox(p));
+    }
     grid.appendChild(card);
     requestAnimationFrame(() => requestAnimationFrame(() => {
       card.style.opacity = '1';
@@ -1239,6 +1342,47 @@ render('all');
       requestAnimationFrame(() => requestAnimationFrame(() => { el.classList.remove('in-from-below'); }));
     }, 500);
   }, 2800);
+})();
+
+/* VIDEO LIGHTBOX — lazy: the YouTube iframe is only created when a project is opened,
+   and destroyed on close, so nothing video-related loads until the user actually clicks.
+   (Works once deployed to your own domain — Claude's preview link blocks embeds.) */
+(function(){
+  const lightbox = document.getElementById('videoLightbox');
+  const frame = document.getElementById('lightboxFrame');
+  const tag = document.getElementById('lightboxTag');
+  const title = document.getElementById('lightboxTitle');
+  const openLink = document.getElementById('lightboxOpen');
+  const closeBtn = document.getElementById('lightboxClose');
+  const backdrop = document.getElementById('lightboxBackdrop');
+
+  function openVideo(project){
+    tag.textContent = project.cat.toUpperCase();
+    title.textContent = project.title;
+    openLink.href = project.url || `https://youtube.com/shorts/${project.video}`;
+    frame.innerHTML = `<iframe src="https://www.youtube.com/embed/${project.video}?autoplay=1&rel=0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>`;
+    frame.classList.toggle('wide', !!project.wide);
+    document.querySelector('.lightbox-panel').classList.toggle('wide', !!project.wide);
+    lightbox.classList.add('open');
+    lightbox.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeVideo(){
+    lightbox.classList.remove('open');
+    lightbox.setAttribute('aria-hidden', 'true');
+    frame.innerHTML = ''; // stops playback and frees the resource immediately
+    document.body.style.overflow = '';
+  }
+  window.openVideoLightbox = openVideo; // used by the card click wiring in render()
+
+  closeBtn.addEventListener('click', closeVideo);
+  backdrop.addEventListener('click', closeVideo);
+  document.addEventListener('keydown', (e) => { if(e.key === 'Escape') closeVideo(); });
+
+  document.querySelectorAll('.stile[data-video]').forEach((tile) => {
+    const match = projects.find(p => p.video === tile.dataset.video);
+    if(match){ tile.style.cursor = 'pointer'; tile.addEventListener('click', () => openVideo(match)); }
+  });
 })();
 </script>
 
