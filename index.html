@@ -1302,8 +1302,8 @@ render('all');
   window.addEventListener('mousemove', (e) => { tx = e.clientX; ty = e.clientY; });
 
   function loop(){
-    cx += (tx - cx) * 0.15;  // slower, softer follow — intentional, not snappy
-    cy += (ty - cy) * 0.15;
+    cx += (tx - cx) * 1;  // slower, softer follow — intentional, not snappy
+    cy += (ty - cy) * 1;
     dot.style.transform = `translate(${cx}px, ${cy}px)`;
     requestAnimationFrame(loop);
   }
